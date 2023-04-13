@@ -2,11 +2,11 @@
 //!
 //! It talks to different APIs and its own Database to provide useful functionality that you would
 //! otherwise only get ingame or from a website like [KZ:GO](https://kzgo.eu). This functionality
-//! mostly revolves around `/` commands, including:
-//! - `/pb`
-//! - `/wr`
-//! - `/recent`
-//! - `/player`
+//! mostly revolves around chat commands, including:
+//! - `!pb`
+//! - `!wr`
+//! - `!recent`
+//! - `!player`
 //!
 //! and many more! For a full list check out the [Wiki](https://github.com/Schnose/TwitchBot/wiki).
 //! I am running a public instance that you can invite to your channel by visiting [the account's

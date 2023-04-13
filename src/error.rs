@@ -44,6 +44,9 @@ pub enum Error {
 
 	#[error("`{map}` is not a global map.")]
 	MapNotGlobal { map: String },
+
+	#[error("Twitch API Error.")]
+	Twitch,
 }
 
 impl From<gokz_rs::Error> for Error {
@@ -69,6 +72,13 @@ impl From<sqlx::Error> for Error {
 				Self::Unknown
 			}
 		}
+	}
+}
+
+impl From<twitch_irc::validate::Error> for Error {
+	fn from(error: twitch_irc::validate::Error) -> Self {
+		error!("Error talking to Twitch: {error:?}");
+		Self::Twitch
 	}
 }
 

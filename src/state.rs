@@ -131,6 +131,57 @@ impl State {
 				};
 
 				match command {
+					Command::Join { channel_id, channel_name } => {
+						let reply = format!("Joined {channel_name}.");
+						ctx.twitch_client
+							.join(channel_name.clone())?;
+
+						if let Err(why) = sqlx::query(&format!(
+							r#"
+							INSERT INTO {streamers}
+							  (channel_id, channel_name)
+							VALUES
+							  ($1, $2)
+							ON CONFLICT DO NOTHING
+							"#,
+							streamers = &self.config.streamers_table
+						))
+						.bind(channel_id)
+						.bind(channel_name)
+						.execute(&self.database_connection)
+						.await
+						{
+							error!("Failed to insert streamer into database: {why:?}");
+							return ctx
+								.reply("Failed to join channel.")
+								.await;
+						}
+
+						ctx.send(reply).await?
+					}
+					Command::Leave { channel_id, channel_name } => {
+						let reply = format!("Left {channel_name}.");
+						ctx.twitch_client.part(channel_name);
+
+						if let Err(why) = sqlx::query(&format!(
+							r#"
+							DELETE FROM {streamers}
+							WHERE channel_id = $1
+							"#,
+							streamers = &self.config.streamers_table
+						))
+						.bind(channel_id)
+						.execute(&self.database_connection)
+						.await
+						{
+							error!("Failed to remove streamer from database: {why:?}");
+							return ctx
+								.reply("Failed to leave channel.")
+								.await;
+						}
+
+						ctx.send(reply).await?
+					}
 					Command::Ping => ctx.reply("Pong!").await?,
 					Command::APIStatus => commands::apistatus(ctx).await?,
 					Command::BPB { map, mode, player, course } => {

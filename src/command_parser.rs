@@ -11,6 +11,14 @@ use {
 
 #[derive(Debug, Clone)]
 pub enum Command {
+	Join {
+		channel_id: i32,
+		channel_name: String,
+	},
+	Leave {
+		channel_id: i32,
+		channel_name: String,
+	},
 	Ping,
 	APIStatus,
 	BPB {
@@ -79,6 +87,22 @@ impl Command {
 			.expect("ChannelID should always be a number.");
 
 		match command_name.as_str() {
+			"join" if &message.channel_login == &state.config.username => Ok(Self::Join {
+				channel_id: message
+					.sender
+					.id
+					.parse()
+					.expect("ChannelID should always be a number."),
+				channel_name: message.sender.login.clone(),
+			}),
+			"leave" if &message.channel_login == &state.config.username => Ok(Self::Leave {
+				channel_id: message
+					.sender
+					.id
+					.parse()
+					.expect("ChannelID should always be a number."),
+				channel_name: message.sender.login.clone(),
+			}),
 			"ping" => Ok(Self::Ping),
 			"api" | "apistatus" => Ok(Self::APIStatus),
 			"bpb" => {

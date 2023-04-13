@@ -2,11 +2,14 @@ use shuttle_secrets::SecretStore;
 
 #[derive(Debug, Clone)]
 pub struct Config {
-	/// `ClientID` of the bot's Twitch account
+	/// `client_id` of the bot's Twitch account
 	pub client_id: String,
 
-	/// Client Secret of the bot's Twitch account
+	/// `client_secret` of the bot's Twitch account
 	pub client_secret: String,
+
+	/// The username of the account used by the bot
+	pub username: String,
 
 	/// PostgreSQL connection string
 	pub database_url: String,
@@ -30,6 +33,9 @@ impl Config {
 			client_secret: secret_store
 				.get("CLIENT_SECRET")
 				.expect("Missing `CLIENT_SECRET` secret."),
+			username: secret_store
+				.get("USERNAME")
+				.expect("Missing `USERNAME` secret."),
 			database_url: secret_store
 				.get("DATABASE_URL")
 				.expect("Missing `DATABASE_URL` secret."),

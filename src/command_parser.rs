@@ -10,6 +10,7 @@ use {
 #[derive(Debug, Clone)]
 pub enum Command {
 	Ping,
+	APIStatus,
 }
 
 impl Command {
@@ -29,14 +30,15 @@ impl Command {
 
 		let mut args = args.split(' ');
 
-		let command_name = args.next().unwrap();
+		let command_name = args.next().unwrap().to_lowercase();
 
 		let args = args
 			.filter(|s| !s.is_empty())
 			.collect::<Vec<_>>();
 
-		match command_name {
+		match command_name.as_str() {
 			"ping" => Ok(Self::Ping),
+			"api" | "apistatus" => Ok(Self::APIStatus),
 			cmd => Err(Error::UnknownCommand(cmd.to_owned())),
 		}
 	}

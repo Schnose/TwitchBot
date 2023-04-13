@@ -22,6 +22,7 @@ use {
 };
 
 mod command_parser;
+mod commands;
 mod config;
 mod database;
 mod error;

@@ -1,7 +1,10 @@
 db:
   docker-compose up -d
   sleep 1
-  PGPASSWORD=postgres ./migrations/connect.example.sh < ./migrations/schemas_up.sql
+  ./migrations/connect.example.sh < ./migrations/schemas_up.sql
+
+populate:
+  ./migrations/connect.example.sh < ./migrations/populate.sql
 
 # Run locally
 run:

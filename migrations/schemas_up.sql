@@ -14,5 +14,10 @@ CREATE TABLE IF NOT EXISTS streamers (
 	channel_name VARCHAR(255) NOT NULL,
 	api_key UUID,
 
+	player_name VARCHAR(255),
+	steam_id INT,
+	map_name VARCHAR(255),
+	mode INT2,
+
 	PRIMARY KEY(channel_id)
 );

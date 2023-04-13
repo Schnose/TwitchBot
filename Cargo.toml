@@ -65,3 +65,6 @@ version = "0.14"
 [dependencies.shuttle-secrets]
 version = "0.14"
 
+[dev-dependencies]
+color-eyre = "0.6"
+

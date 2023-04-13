@@ -1,4 +1,5 @@
 use {
+	gokz_rs::{MapIdentifier, Mode, PlayerIdentifier},
 	thiserror::Error,
 	tracing::{debug, error},
 };
@@ -19,8 +20,11 @@ pub enum Error {
 	#[error("Failed to access database.")]
 	DatabaseAccess,
 
-	#[error("No database entries found.")]
-	NoDatabaseEntries,
+	#[error("Incorrect arguments. Expected {expected}")]
+	IncorrectArgs { expected: String },
+
+	#[error("No data about streamer found. Please supply arguments.")]
+	NoDataAboutStreamer,
 }
 
 impl From<gokz_rs::Error> for Error {
@@ -41,7 +45,6 @@ impl From<sqlx::Error> for Error {
 				debug!("{why:?}");
 				Self::DatabaseAccess
 			}
-			sqlx::Error::RowNotFound => Self::NoDatabaseEntries,
 			why => {
 				debug!("{why:?}");
 				Self::Unknown
@@ -49,3 +52,26 @@ impl From<sqlx::Error> for Error {
 		}
 	}
 }
+
+pub trait GenParseError {
+	fn incorrect() -> Error;
+	fn no_data() -> Error {
+		Error::NoDataAboutStreamer
+	}
+}
+
+macro_rules! gen_parse_err {
+	($t:ty, $incorrect:expr) => {
+		impl GenParseError for $t {
+			fn incorrect() -> Error {
+				$incorrect
+			}
+		}
+	};
+}
+
+pub(crate) use gen_parse_err;
+
+gen_parse_err!(Mode, Error::IncorrectArgs { expected: String::from("mode") });
+gen_parse_err!(PlayerIdentifier, Error::IncorrectArgs { expected: String::from("player") });
+gen_parse_err!(MapIdentifier, Error::IncorrectArgs { expected: String::from("map") });

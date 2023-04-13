@@ -30,12 +30,12 @@ If you want to run your own instance of the bot, you can follow these steps:
 git clone https://github.com/Schnose/TwitchBot.git
 ```
 
-4. Create an account at https://www.shuttle.rs
+3. Create an account at https://www.shuttle.rs
 
-5. Copy the `Secrets.example.toml` to `Secrets.dev.toml` (for running locally) and to `Secrets.toml`
+4. Copy the `Secrets.example.toml` to `Secrets.dev.toml` (for running locally) and to `Secrets.toml`
    (for deploying) and modify the values according to your needs.
 
-6. Run the project locally:
+5. Run the project locally:
 
 ```sh
 just dev

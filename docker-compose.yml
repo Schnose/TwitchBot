@@ -1,0 +1,15 @@
+version: '3'
+
+services:
+  db:
+    image: supabase/postgres
+    ports:
+      - "5432:5432"
+    command: postgres -c config_file=/etc/postgresql/postgresql.conf
+    environment:
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - schnose-twitch-bot-db:/var/lib/docker/volumes/schnose-twitch-bot-db/_data
+
+volumes:
+  schnose-twitch-bot-db:

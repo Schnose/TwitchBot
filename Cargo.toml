@@ -1,0 +1,67 @@
+[package]
+name = "schnose-twitch-bot"
+version = "1.0.0"
+authors = ["AlphaKeks <alphakeks@dawn.sh>"]
+edition = "2021"
+description = "Twitch Bot for CS:GO KZ"
+documentation = "https://github.com/Schnose/TwitchBot/wiki"
+readme = "./README.md"
+homepage = "https://github.com/Schnose"
+repository = "https://github.com/Schnose/TwitchBot"
+license-file = "./LICENSE"
+publish = false
+
+# Utilities
+[dependencies.schnosebot]
+git = "https://github.com/Schnose/SchnoseBot"
+
+# Error handling
+[dependencies.thiserror]
+version = "1"
+
+# Logging
+[dependencies.tracing]
+version = "0.1"
+
+# Utilities
+[dependencies.chrono]
+version = "0.4"
+
+# JSON parsing
+[dependencies.serde]
+version = "1"
+features = ["derive"]
+
+[dependencies.serde_json]
+version = "1"
+
+# GOKZ
+[dependencies.gokz_rs]
+version = "0.18"
+features = ["global_api", "kzgo_api", "schnose_api"]
+
+# Async
+[dependencies.tokio]
+version = "1"
+features = ["full"]
+
+# SQL
+[dependencies.sqlx]
+version = "0.6"
+features = ["runtime-tokio-rustls", "postgres", "all-types"]
+
+# Twitch
+[dependencies.twitch-irc]
+version = "5"
+features = ["refreshing-token-rustls-webpki-roots"]
+
+# shuttle.rs
+[dependencies.shuttle-runtime]
+version = "0.14"
+
+[dependencies.shuttle-service]
+version = "0.14"
+
+[dependencies.shuttle-secrets]
+version = "0.14"
+

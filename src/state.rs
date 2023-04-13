@@ -1,12 +1,17 @@
 use {
-	crate::{config::Config, error::Result, tokenstore::TokenStore},
+	crate::{
+		command_parser::Command, config::Config, database::StreamerRow, error::Result,
+		tokenstore::TokenStore,
+	},
 	schnosebot::global_map::GlobalMap,
 	sqlx::{postgres::PgPoolOptions, Pool, Postgres},
+	std::fmt::Display,
 	tokio::sync::mpsc::UnboundedReceiver,
 	tracing::{error, info},
 	twitch_irc::{
+		irc,
 		login::RefreshingLoginCredentials,
-		message::ServerMessage,
+		message::{PrivmsgMessage, ServerMessage},
 		transport::tcp::{TCPTransport, TLS},
 		ClientConfig, TwitchIRCClient,
 	},
@@ -91,15 +96,59 @@ impl State {
 		while let Some(message) = self.message_stream.recv().await {
 			info!("Received message");
 
-			if let ServerMessage::Privmsg(message) = message {
-				let channel = message.channel_login;
-				let user = message.sender.name;
-				let message = message.message_text;
+			if let ServerMessage::Privmsg(msg) = message {
+				let channel = &msg.channel_login;
+				let user = &msg.sender.name;
+				let message = &msg.message_text;
 
 				info!("[{channel}] {user}: {message}");
+
+				if !message.starts_with(&self.config.command_prefix) {
+					// Not a command.
+					continue;
+				}
+
+				let command = match Command::parse(&self, &msg).await {
+					Ok(command) => command,
+					Err(why) => {
+						self.send(why, &msg).await?;
+						continue;
+					}
+				};
+
+				match command {
+					Command::Ping => self.reply("Pong!", &msg).await?,
+				}
 			}
 		}
 
 		Ok(())
+	}
+
+	pub async fn send(&self, message: impl Display, msg: &PrivmsgMessage) -> Result<()> {
+		let channel = format!("#{}", msg.channel_login);
+		let message = irc!("PRIVMSG", channel, message.to_string());
+
+		if let Err(why) = self
+			.twitch_client
+			.send_message(message)
+			.await
+		{
+			error!("Failed to send message: {why:?}");
+		}
+
+		Ok(())
+	}
+
+	pub async fn reply(&self, message: impl Display, msg: &PrivmsgMessage) -> Result<()> {
+		let message = format!("@{} {}", msg.sender.name, message);
+		self.send(message, msg).await
+	}
+
+	pub async fn fetch_streamer(&self, channel_id: &str) -> Result<StreamerRow> {
+		Ok(sqlx::query_as("SELECT * FROM streamers WHERE channel_id = $1")
+			.bind(channel_id)
+			.fetch_one(&self.database_connection)
+			.await?)
 	}
 }

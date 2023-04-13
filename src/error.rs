@@ -6,6 +6,14 @@ use {
 
 pub type Result<T> = std::result::Result<T, Error>;
 
+macro_rules! yeet {
+	($e:expr) => {
+		return Err($e);
+	};
+}
+
+pub(crate) use yeet;
+
 #[derive(Debug, Clone, Error)]
 pub enum Error {
 	#[error("Unknown error occurred.")]
@@ -25,6 +33,13 @@ pub enum Error {
 
 	#[error("No data about streamer found. Please supply arguments.")]
 	NoDataAboutStreamer,
+
+	#[error("")]
+	NotACommand,
+
+	// #[error("Unknown command `{0}`")]
+	#[error("")]
+	UnknownCommand(String),
 }
 
 impl From<gokz_rs::Error> for Error {

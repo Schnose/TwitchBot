@@ -21,6 +21,7 @@ use {
 	shuttle_secrets::SecretStore,
 };
 
+mod command_parser;
 mod config;
 mod database;
 mod error;

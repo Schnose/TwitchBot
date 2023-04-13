@@ -121,6 +121,9 @@ impl State {
 				match command {
 					Command::Ping => ctx.reply("Pong!").await?,
 					Command::APIStatus => commands::apistatus(ctx).await?,
+					Command::BPB { map, mode, player, course } => {
+						commands::bpb(ctx, map, course, mode, player).await?
+					}
 				}
 			}
 		}
@@ -128,7 +131,7 @@ impl State {
 		Ok(())
 	}
 
-	pub async fn fetch_streamer(&self, channel_id: &str) -> Result<StreamerRow> {
+	pub async fn fetch_streamer(&self, channel_id: i32) -> Result<StreamerRow> {
 		Ok(sqlx::query_as("SELECT * FROM streamers WHERE channel_id = $1")
 			.bind(channel_id)
 			.fetch_one(&self.database_connection)

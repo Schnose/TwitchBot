@@ -1,5 +1,6 @@
 use {
 	gokz_rs::{MapIdentifier, Mode, PlayerIdentifier},
+	std::fmt::Display,
 	thiserror::Error,
 	tracing::{debug, error},
 };
@@ -31,8 +32,8 @@ pub enum Error {
 	#[error("Incorrect arguments. Expected {expected}")]
 	IncorrectArgs { expected: String },
 
-	#[error("No data about streamer found. Please supply arguments.")]
-	NoDataAboutStreamer,
+	#[error("No data about streamer found. Please supply arguments ({arg}).")]
+	NoDataAboutStreamer { arg: String },
 
 	#[error("")]
 	NotACommand,
@@ -40,6 +41,9 @@ pub enum Error {
 	// #[error("Unknown command `{0}`")]
 	#[error("")]
 	UnknownCommand(String),
+
+	#[error("`{map}` is not a global map.")]
+	MapNotGlobal { map: String },
 }
 
 impl From<gokz_rs::Error> for Error {
@@ -70,8 +74,8 @@ impl From<sqlx::Error> for Error {
 
 pub trait GenParseError {
 	fn incorrect() -> Error;
-	fn no_data() -> Error {
-		Error::NoDataAboutStreamer
+	fn no_data(arg: impl Display) -> Error {
+		Error::NoDataAboutStreamer { arg: arg.to_string() }
 	}
 }
 

@@ -1,26 +1,27 @@
 use {
 	crate::{
-		error::{Error, Result},
+		error::{Error, GenParseError, Result},
 		state::State,
 	},
 	gokz_rs::{MapIdentifier, Mode, PlayerIdentifier, SteamID},
 	shuttle_runtime::async_trait,
 };
 
-pub mod parse_args;
+mod parse_args;
+pub(crate) use parse_args::parse_args;
 
 #[async_trait]
 pub trait Parsable {
 	type Output;
 
-	async fn parse(self, channel_id: &str, state: &State) -> Result<Self::Output>;
+	async fn parse(self, channel_id: i32, state: &State) -> Result<Self::Output>;
 }
 
 #[async_trait]
 impl Parsable for Option<MapIdentifier> {
 	type Output = MapIdentifier;
 
-	async fn parse(self, channel_id: &str, state: &State) -> Result<Self::Output> {
+	async fn parse(self, channel_id: i32, state: &State) -> Result<Self::Output> {
 		if let Some(map_identifier) = self {
 			return Ok(map_identifier);
 		}
@@ -29,7 +30,7 @@ impl Parsable for Option<MapIdentifier> {
 			.fetch_streamer(channel_id)
 			.await?
 			.map_name
-			.ok_or(Error::NoDataAboutStreamer)
+			.ok_or(MapIdentifier::no_data("map"))
 			.map(Into::into)
 	}
 }
@@ -38,7 +39,7 @@ impl Parsable for Option<MapIdentifier> {
 impl Parsable for Option<Mode> {
 	type Output = Mode;
 
-	async fn parse(self, channel_id: &str, state: &State) -> Result<Self::Output> {
+	async fn parse(self, channel_id: i32, state: &State) -> Result<Self::Output> {
 		if let Some(mode) = self {
 			return Ok(mode);
 		}
@@ -49,7 +50,7 @@ impl Parsable for Option<Mode> {
 			.mode
 		{
 			Some(mode_id) => Ok(Mode::try_from(mode_id as u8)?),
-			None => Err(Error::NoDataAboutStreamer),
+			None => Err(MapIdentifier::no_data("mode")),
 		}
 	}
 }
@@ -58,7 +59,7 @@ impl Parsable for Option<Mode> {
 impl Parsable for Option<PlayerIdentifier> {
 	type Output = PlayerIdentifier;
 
-	async fn parse(self, channel_id: &str, state: &State) -> Result<Self::Output> {
+	async fn parse(self, channel_id: i32, state: &State) -> Result<Self::Output> {
 		if let Some(player_identifier) = self {
 			return Ok(player_identifier);
 		}
@@ -75,7 +76,7 @@ impl Parsable for Option<PlayerIdentifier> {
 			}
 			None => streamer_info
 				.player_name
-				.ok_or(Error::NoDataAboutStreamer)
+				.ok_or(MapIdentifier::no_data("player"))
 				.map(Into::into),
 		}
 	}

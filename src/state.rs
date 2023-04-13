@@ -97,18 +97,30 @@ impl State {
 			info!("Received message");
 
 			if let ServerMessage::Privmsg(msg) = message {
-				let channel = &msg.channel_login;
-				let user = &msg.sender.name;
-				let message = &msg.message_text;
+				let ctx = Context { state: &self, msg };
+
+				let channel = &ctx.msg.channel_login;
+				let user = &ctx.msg.sender.name;
+				let message = &ctx.msg.message_text;
 
 				info!("[{channel}] {user}: {message}");
+
+				if message.contains("(͡ ͡° ͜ つ ͡͡°)") {
+					ctx.send("(͡ ͡° ͜ つ ͡͡°)").await?;
+				}
+
+				if let Some(schnose) = message.split(' ').find_map(|word| {
+					word.to_lowercase()
+						.contains("schnose")
+						.then_some(word)
+				}) {
+					ctx.send(schnose).await?;
+				}
 
 				if !message.starts_with(&self.config.command_prefix) {
 					// Not a command.
 					continue;
 				}
-
-				let ctx = Context { state: &self, msg };
 
 				let command = match Command::parse(&self, &ctx.msg).await {
 					Ok(command) => command,

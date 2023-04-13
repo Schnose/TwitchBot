@@ -65,6 +65,11 @@ version = "0.14"
 [dependencies.shuttle-secrets]
 version = "0.14"
 
+# Axum
+[dependencies.axum]
+version = "0.6"
+features = ["macros"]
+
 [dev-dependencies]
 color-eyre = "0.6"
 

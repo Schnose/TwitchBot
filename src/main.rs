@@ -21,6 +21,7 @@ use {
 	shuttle_secrets::SecretStore,
 };
 
+mod axum;
 mod command_parser;
 mod commands;
 mod config;

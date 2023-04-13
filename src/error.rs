@@ -94,3 +94,4 @@ pub(crate) use gen_parse_err;
 gen_parse_err!(Mode, Error::IncorrectArgs { expected: String::from("mode") });
 gen_parse_err!(PlayerIdentifier, Error::IncorrectArgs { expected: String::from("player") });
 gen_parse_err!(MapIdentifier, Error::IncorrectArgs { expected: String::from("map") });
+gen_parse_err!(u32, Error::IncorrectArgs { expected: String::from("RecordID") });

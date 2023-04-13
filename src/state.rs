@@ -124,6 +124,18 @@ impl State {
 					Command::BPB { map, mode, player, course } => {
 						commands::bpb(ctx, map, course, mode, player).await?
 					}
+					Command::BWR { map, course, mode } => {
+						commands::bwr(ctx, map, course, mode).await?
+					}
+					Command::Map { map } => commands::map(ctx, map).await?,
+					Command::MostRecentRun => commands::most_recent_run(ctx).await?,
+					Command::PB { map, mode, player } => {
+						commands::pb(ctx, map, mode, player).await?
+					}
+					Command::Player { player } => commands::player(ctx, player).await?,
+					Command::Recent { player } => commands::recent(ctx, player).await?,
+					Command::Record { record_id } => commands::record(ctx, record_id).await?,
+					Command::WR { map, mode } => commands::wr(ctx, map, mode).await?,
 				}
 			}
 		}

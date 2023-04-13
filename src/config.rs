@@ -16,6 +16,9 @@ pub struct Config {
 
 	/// PostgreSQL table name to store streamer information in
 	pub streamers_table: String,
+
+	/// Prefix to use for chat commands
+	pub command_prefix: String,
 }
 
 impl Config {
@@ -36,6 +39,9 @@ impl Config {
 			streamers_table: secret_store
 				.get("STREAMERS_TABLE")
 				.expect("Missing `STREAMERS_TABLE` secret."),
+			command_prefix: secret_store
+				.get("COMMAND_PREFIX")
+				.unwrap_or_else(|| String::from("!")),
 		}
 	}
 }

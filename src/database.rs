@@ -21,4 +21,8 @@ pub struct StreamerRow {
 	pub channel_id: i32,
 	pub channel_name: String,
 	pub api_key: Option<Uuid>,
+	pub player_name: Option<String>,
+	pub steam_id: Option<i32>,
+	pub map_name: Option<String>,
+	pub mode: Option<i16>,
 }

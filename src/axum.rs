@@ -84,6 +84,7 @@ async fn post_info(
 		  steam_id = $2,
 		  map_name = $3,
 		  mode = $4
+		WHERE api_key = $5
 		"#
 	))
 	.bind(params.player_name)
@@ -94,6 +95,7 @@ async fn post_info(
 	)
 	.bind(params.map_name)
 	.bind(params.mode.map(|mode| mode as i16))
+	.bind(api_key)
 	.execute(&database_connection)
 	.await
 	{

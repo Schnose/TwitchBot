@@ -23,6 +23,7 @@ pub async fn run(addr: SocketAddr, streamers_table: String, database_connection:
 
 	let router = Router::new()
 		.route("/", get(|| async { "(͡ ͡° ͜ つ ͡͡°)" }))
+		.route("/health", get(|| async { "(͡ ͡° ͜ つ ͡͡°)" }))
 		.route("/streamer", post(post_info))
 		.with_state(database);
 

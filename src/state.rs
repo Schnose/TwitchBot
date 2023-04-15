@@ -223,7 +223,7 @@ pub struct Context<'state> {
 impl std::ops::Deref for Context<'_> {
 	type Target = State;
 	fn deref(&self) -> &Self::Target {
-		&self.state
+		self.state
 	}
 }
 

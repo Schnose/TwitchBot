@@ -1,3 +1,5 @@
+#![allow(clippy::upper_case_acronyms)]
+
 use {
 	crate::{
 		error::{yeet, Error, Result},
@@ -76,6 +78,7 @@ impl Command {
 		let command_name = args.next().unwrap().to_lowercase();
 
 		let args = args
+			.map(|s| s.trim())
 			.filter(|s| !s.is_empty())
 			.collect::<Vec<_>>();
 
@@ -87,7 +90,7 @@ impl Command {
 			.expect("ChannelID should always be a number.");
 
 		match command_name.as_str() {
-			"join" if &message.channel_login == &state.config.username => Ok(Self::Join {
+			"join" if message.channel_login == state.config.username => Ok(Self::Join {
 				channel_id: message
 					.sender
 					.id
@@ -95,7 +98,7 @@ impl Command {
 					.expect("ChannelID should always be a number."),
 				channel_name: message.sender.login.clone(),
 			}),
-			"leave" if &message.channel_login == &state.config.username => Ok(Self::Leave {
+			"leave" if message.channel_login == state.config.username => Ok(Self::Leave {
 				channel_id: message
 					.sender
 					.id

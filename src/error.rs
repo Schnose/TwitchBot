@@ -1,3 +1,5 @@
+#![allow(clippy::upper_case_acronyms)]
+
 use {
 	gokz_rs::{MapIdentifier, Mode, PlayerIdentifier},
 	std::fmt::Display,
@@ -57,6 +59,7 @@ impl From<gokz_rs::Error> for Error {
 	}
 }
 
+#[allow(clippy::cognitive_complexity)] // ???
 impl From<sqlx::Error> for Error {
 	fn from(error: sqlx::Error) -> Self {
 		error!("SQLx Error.");

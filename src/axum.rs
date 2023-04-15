@@ -42,7 +42,7 @@ struct Params {
 }
 
 #[derive(Debug, PartialEq, FromRow)]
-struct ApiKey(Uuid);
+struct ApiKey(Option<Uuid>);
 
 #[axum::debug_handler]
 async fn post_info(
@@ -72,7 +72,12 @@ async fn post_info(
 			return StatusCode::INTERNAL_SERVER_ERROR;
 		};
 
-	if !api_keys.contains(&ApiKey(api_key)) {
+	let api_keys = api_keys
+		.into_iter()
+		.filter_map(|key| key.0)
+		.collect::<Vec<_>>();
+
+	if !api_keys.contains(&api_key) {
 		error!("User provided invalid API key.");
 		return StatusCode::UNAUTHORIZED;
 	}

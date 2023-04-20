@@ -147,7 +147,8 @@ impl Command {
 				Ok(Self::BWR { map, course, mode })
 			}
 			"m" | "map" => {
-				let map = parse_args!(args, MapIdentifier)?;
+				let map = parse_args!(args, "opt" MapIdentifier)?;
+				let map = map.parse(channel_id, state).await?;
 				let map = GlobalMap::fuzzy_search(&state.global_maps, map.clone())
 					.ok_or(Error::MapNotGlobal { map: map.to_string() })?;
 
